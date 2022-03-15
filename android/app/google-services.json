@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "945181760424",
+    "project_id": "react-native-chat-fireba-6a1e9",
+    "storage_bucket": "react-native-chat-fireba-6a1e9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945181760424:android:0e75b4f1e76cf3bf13db9d",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "945181760424-fb8d3c7affuaemm0qltdligdhdtn90ev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPtwk7QYNANCyuM75--2u9_dOd8gzVsgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "945181760424-fb8d3c7affuaemm0qltdligdhdtn90ev.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
