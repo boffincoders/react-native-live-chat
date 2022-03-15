@@ -15,8 +15,10 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-   const [status , setStatus] = useState("")
+  const [users, setUsers] = useState([])
+  const [status, setStatus] = useState("")
   const Stack = createNativeStackNavigator();
+  const currentUser = GetFirebaseAuth?.currentUser?.uid
   firebase.setLogLevel('info');
   useEffect(() => {
     if (!firebase.apps.length) {
@@ -34,8 +36,43 @@ const App = () => {
         setIsLoggedIn(false);
       }
     });
+    GetFireStoreApp.collection('Users')
+      .get()
+      .then(docs => {
+        let array = [];
+        docs.forEach(x => {
+          const data = x.data();
+          array.push(data);
+        });
+        setUsers(array);
+      });
   }, []);
-
+  const Header = ({ item }) => {
+    return (
+      <View
+        style={{
+          width: '100%',
+          paddingHorizontal: 20,
+          paddingVertical: 20,
+        }}>
+        <View
+          style={{
+            width: '35%',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}>
+          <TouchableOpacity onPress={() => navigation.navigate('chatList')}>
+            <AntDesign name="left" size={25} color="black" />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 20, color: 'black', fontWeight: '600' }}>
+            Chat App
+          </Text>
+        </View>
+        <Text style={{ paddingHorizontal: 42 }}>{item.status}</Text>
+      </View>
+    )
+  }
   const AuthStack = () => {
     return (
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -55,36 +92,13 @@ const App = () => {
         />
         <Stack.Screen
           options={{
-            header: navigation => {
-              return (
-                <View
-                  style={{
-                    width: '100%',
-                    paddingHorizontal: 20,
-                    paddingVertical: 20,
-                  }}>
-                  <View
-                    style={{
-                      width: '35%',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                    }}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate('chatList')}>
-                      <AntDesign name="left" size={25} color="black" />
-                    </TouchableOpacity>
-                    <Text
-                      style={{ fontSize: 20, color: 'black', fontWeight: '600' }}>
-                      Chat App
-                    </Text>
-                  </View>
-                  <Text style={{ paddingHorizontal: 42 }}>
-                    {status}
-                  </Text>
-                </View>
-              );
-            },
+            headerShown: false, header: () => (
+              users.map((x, index) => {
+                return (
+                  x?.uid === currentUser && <Header item={x} />
+                )
+              })
+            )
           }}
           name="chat"
           component={ChatScreen}

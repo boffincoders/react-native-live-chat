@@ -39,6 +39,7 @@ export default function ChatList() {
       status: "Offline"
     })
   };
+  console.log(users,"users")
   return (
     <View style={{ flex: 1, paddingTop: 10 }}>
       <View style={styles.container}>
@@ -67,6 +68,7 @@ export default function ChatList() {
                       color: 'white',
                     }}>{`${user.name}`}</Text>
                   <Text style={{ color: 'white' }}>{`${user?.email}`}</Text>
+                  <Text style={{ color: 'white' }}>{`${user?.status}`}</Text>
                 </View>
               </TouchableOpacity>
             ),
