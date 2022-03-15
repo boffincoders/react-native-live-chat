@@ -73,7 +73,6 @@ const ChatScreen = () => {
       {users.map((x, index) => {
         return x.uid === currentUser && <Header item={x} />;
       })}
-
       <GiftedChat
         messages={messages}
         onSend={messages => onSend(messages)}

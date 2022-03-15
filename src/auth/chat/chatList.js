@@ -1,5 +1,5 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState, useEffect} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {Button} from 'react-native-elements';
-import {GetFirebaseAuth, GetFireStoreApp} from '../../utils/firebaseMethods';
+import { Button } from 'react-native-elements';
+import { GetFirebaseAuth, GetFireStoreApp } from '../../utils/firebaseMethods';
 export default function ChatList() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
-  const currenUserId = GetFirebaseAuth?.currentUser?.uid;
   const navigation = useNavigation();
+// sandeeo
   useEffect(() => {
     StatusBar.setBarStyle('dark-content', false);
     GetFireStoreApp.collection('Users')
@@ -33,15 +33,16 @@ export default function ChatList() {
   }, []);
   const handleLogout = () => {
     GetFirebaseAuth.signOut().then(() => {
-      console.log('user signedOut');
+      console.log("signedOut")
     });
-    GetFireStoreApp.collection('Users').doc(currenUserId).update({
-      status: 'Offline',
-    });
+    GetFireStoreApp.collection("Users").doc(currentUser.uid).update({
+      status: "Offline"
+    })
   };
   return (
-    <View style={{flex: 1, paddingTop: 10}}>
+    <View style={{ flex: 1, paddingTop: 10 }}>
       <View style={styles.container}>
+        <View style={styles.searchView}></View>
         <ScrollView>
           <Text
             style={{
@@ -52,9 +53,10 @@ export default function ChatList() {
             }}>
             Users
           </Text>
-          {users.map(user =>
+          {users.map((user, index) =>
             user.uid === currentUser.uid ? null : (
               <TouchableOpacity
+                key={index}
                 onPress={() => navigation.navigate('chat')}
                 style={styles.userCard}>
                 <View style={styles.userCardRight}>
@@ -64,12 +66,12 @@ export default function ChatList() {
                       fontWeight: '500',
                       color: 'white',
                     }}>{`${user.name}`}</Text>
-                  <Text style={{color: 'white'}}>{`${user?.email}`}</Text>
+                  <Text style={{ color: 'white' }}>{`${user?.email}`}</Text>
                 </View>
               </TouchableOpacity>
             ),
           )}
-          <View style={{height: 50}}></View>
+          <View style={{ height: 50 }}></View>
         </ScrollView>
       </View>
       <Button title={'Logout'} onPress={handleLogout}></Button>
