@@ -8,7 +8,6 @@ const ChatScreen = () => {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState();
   useEffect(() => {
-   
     GetFirebaseAuth.onAuthStateChanged(user => {
       if (user) {
         setCurrentUser(user?._user?.uid);

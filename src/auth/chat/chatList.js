@@ -61,12 +61,12 @@ export default function ChatList() {
                 onPress={() => navigation.navigate('chat')}
                 style={styles.userCard}>
                 <View style={styles.userCardRight}>
-                  <Text
+                  {/* <Text
                     style={{
                       fontSize: 18,
                       fontWeight: '500',
                       color: 'white',
-                    }}>{`${user.name}`}</Text>
+                    }}>{`${user.name}`}</Text> */}
                   <Text style={{ color: 'white' }}>{`${user?.email}`}</Text>
                   <Text style={{ color: 'white' }}>{`${user?.status}`}</Text>
                 </View>
@@ -76,7 +76,7 @@ export default function ChatList() {
           <View style={{ height: 50 }}></View>
         </ScrollView>
       </View>
-      <Button title={'Logout'} onPress={handleLogout}></Button>
+      <Button title={'LogOut'} onPress={handleLogout}></Button>
     </View>
   );
 }
