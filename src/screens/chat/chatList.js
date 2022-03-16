@@ -75,7 +75,7 @@ export default function ChatList() {
           <View style={{ height: 50 }}></View>
         </ScrollView>
       </View>
-      <Button title={'Logout'} onPress={handleLogout}></Button>
+      <Button title={'LogOut'} onPress={handleLogout}></Button>
     </View>
   );
 }
