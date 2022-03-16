@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,13 +8,29 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import { Button } from 'react-native-elements';
-import { GetFirebaseAuth, GetFireStoreApp } from '../../utils/firebaseMethods';
+import {Badge, Button} from 'react-native-elements';
+import {
+  GetFirebaseAuth,
+  GetFireStoreApp,
+  GetFireStoreDatabase,
+} from '../../utils/firebaseMethods';
 export default function ChatList() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const navigation = useNavigation();
+  const [userActive, setUserActive] = useState();
   useEffect(() => {
+    GetFireStoreDatabase.ref(`/online/${currentUser?.uid}`).on(
+      'value',
+      snapshot => {
+        const status = snapshot.val();
+        if (status) {
+          setUserActive(true);
+        } else if (status === undefined && status === null && status === '') {
+          setUserActive(false);
+        }
+      },
+    );
     StatusBar.setBarStyle('dark-content', false);
     GetFireStoreApp.collection('Users')
       .get()
@@ -32,15 +48,15 @@ export default function ChatList() {
   }, []);
   const handleLogout = () => {
     GetFirebaseAuth.signOut().then(() => {
-      console.log("signedOut")
+      console.log('signedOut');
     });
-    GetFireStoreApp.collection("Users").doc(currentUser.uid).update({
-      status: "Offline"
-    })
+    GetFireStoreApp.collection('Users').doc(currentUser.uid).update({
+      status: 'Offline',
+    });
   };
-  console.log(users,"users")
+
   return (
-    <View style={{ flex: 1, paddingTop: 10 }}>
+    <View style={{flex: 1, paddingTop: 10}}>
       <View style={styles.container}>
         <View style={styles.searchView}></View>
         <ScrollView>
@@ -66,13 +82,36 @@ export default function ChatList() {
                       fontWeight: '500',
                       color: 'white',
                     }}>{`${user.name}`}</Text> */}
-                  <Text style={{ color: 'white' }}>{`${user?.email}`}</Text>
-                  <Text style={{ color: 'white' }}>{`${user?.status}`}</Text>
+                  <Text style={{color: 'white'}}>{`${user?.email}`}</Text>
+                  {userActive ? (
+                    <View style={{flexDirection : "row" , alignItems : "center"}}>
+                      <View
+                        style={{
+                          backgroundColor: 'green',
+                          height: 10,
+                          width: 10,
+                          borderRadius: 20,
+                        }}></View>
+                        <Text style={{color: 'white' , marginLeft : 5}}>Active</Text>
+                    </View>
+                  ) : (
+                    <View style={{flexDirection : "row" , alignItems : "center" }}>
+                      <View
+                        style={{
+                          backgroundColor: 'red',
+                          height: 10,
+                          width: 10,
+                          borderRadius: 20,
+                        }}></View>
+                        <Text style={{color: 'white' , marginLeft : 5}}>Offline</Text>
+                    </View>
+                  )}
                 </View>
               </TouchableOpacity>
             ),
           )}
-          <View style={{ height: 50 }}></View>
+
+          <View style={{height: 50}}></View>
         </ScrollView>
       </View>
       <Button title={'LogOut'} onPress={handleLogout}></Button>

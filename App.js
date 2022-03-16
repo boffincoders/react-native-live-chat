@@ -1,20 +1,24 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useEffect, useState} from 'react';
-import {StatusBar, Text, TouchableOpacity, View,AppState} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {StatusBar, Text, TouchableOpacity, View, AppState} from 'react-native';
 import Login from './src/auth/login';
 import SignUp from './src/auth/signup';
 import firebase from '@react-native-firebase/app';
 import ChatScreen from './src/screens/chat/index';
 import ChatList from './src/screens/chat/chatList';
-import {GetFirebaseAuth, GetFireStoreApp} from './src/utils/firebaseMethods';
+import {
+  GetFirebaseAuth,
+  GetFireStoreApp,
+  GetFireStoreDatabase,
+} from './src/utils/firebaseMethods';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 const App = () => {
   useEffect(() => {
     const appStateListener = AppState.addEventListener(
       'change',
       nextAppState => {
-        if(nextAppState === "active"){
+        if (nextAppState === 'active') {
           GetFirebaseAuth.onAuthStateChanged(user => {
             if (user) {
               GetFireStoreApp.collection('Users').doc(user?.uid).update({
@@ -23,11 +27,9 @@ const App = () => {
               setStatus('Online');
             } else {
               setStatus('Offline');
-             
             }
           });
-
-        }else {
+        } else {
           GetFirebaseAuth.onAuthStateChanged(user => {
             if (user) {
               GetFireStoreApp.collection('Users').doc(user?.uid).update({
@@ -36,7 +38,6 @@ const App = () => {
               setStatus('Offline');
             } else {
               setStatus('Offline');
-             
             }
           });
         }
@@ -46,14 +47,26 @@ const App = () => {
       appStateListener?.remove();
     };
   }, []);
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [users, setUsers] = useState([]);
   const [status, setStatus] = useState('');
   const Stack = createNativeStackNavigator();
   const currentUser = GetFirebaseAuth?.currentUser?.uid;
   firebase.setLogLevel('info');
+  const checkUserStatus = () => {
+    const reference = GetFireStoreDatabase.ref(`/online/${currentUser}`);
+    // Set the /users/:userId value to true
+    reference.set(true).then(() => {
+      
+    });
+    // Remove the node whenever the client disconnects
+    reference
+      .onDisconnect()
+      .remove()
+      .then(() => {});
+  };
   useEffect(() => {
+    checkUserStatus();
     if (!firebase.apps.length) {
       firebase?.initializeApp();
     }

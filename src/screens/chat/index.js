@@ -36,6 +36,7 @@ const ChatScreen = () => {
   
       <GiftedChat
         messages={messages}
+        isTyping={true}
         onSend={messages => onSend(messages)}
         user={{_id: currentUser}}
       />
