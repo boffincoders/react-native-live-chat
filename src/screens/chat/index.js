@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {GetFirebaseAuth, GetFireStoreApp} from '../../utils/firebaseMethods';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Text, TouchableOpacity, View} from 'react-native';
+
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);

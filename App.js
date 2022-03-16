@@ -1,24 +1,57 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
-import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useEffect, useState} from 'react';
+import {StatusBar, Text, TouchableOpacity, View,AppState} from 'react-native';
 import Login from './src/auth/login';
 import SignUp from './src/auth/signup';
 import firebase from '@react-native-firebase/app';
-import ChatList from './src/auth/chat/chatList';
-import ChatScreen from './src/auth/chat';
-import {
-  GetFirebaseAuth,
-  GetFireStoreApp,
-  GetFireStoreDatabase,
-} from './src/utils/firebaseMethods';
+import ChatScreen from './src/screens/chat/index';
+import ChatList from './src/screens/chat/chatList';
+import {GetFirebaseAuth, GetFireStoreApp} from './src/utils/firebaseMethods';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 const App = () => {
+  useEffect(() => {
+    const appStateListener = AppState.addEventListener(
+      'change',
+      nextAppState => {
+        if(nextAppState === "active"){
+          GetFirebaseAuth.onAuthStateChanged(user => {
+            if (user) {
+              GetFireStoreApp.collection('Users').doc(user?.uid).update({
+                status: 'Online',
+              });
+              setStatus('Online');
+            } else {
+              setStatus('Offline');
+             
+            }
+          });
+
+        }else {
+          GetFirebaseAuth.onAuthStateChanged(user => {
+            if (user) {
+              GetFireStoreApp.collection('Users').doc(user?.uid).update({
+                status: 'Offline',
+              });
+              setStatus('Offline');
+            } else {
+              setStatus('Offline');
+             
+            }
+          });
+        }
+      },
+    );
+    return () => {
+      appStateListener?.remove();
+    };
+  }, []);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [users, setUsers] = useState([])
-  const [status, setStatus] = useState("")
+  const [users, setUsers] = useState([]);
+  const [status, setStatus] = useState('');
   const Stack = createNativeStackNavigator();
-  const currentUser = GetFirebaseAuth?.currentUser?.uid
+  const currentUser = GetFirebaseAuth?.currentUser?.uid;
   firebase.setLogLevel('info');
   useEffect(() => {
     if (!firebase.apps.length) {
@@ -26,13 +59,13 @@ const App = () => {
     }
     GetFirebaseAuth.onAuthStateChanged(user => {
       if (user) {
-        GetFireStoreApp.collection("Users").doc(user?.uid).update({
-          status: "Online"
-        })
-        setStatus("Online")
+        GetFireStoreApp.collection('Users').doc(user?.uid).update({
+          status: 'Online',
+        });
+        setStatus('Online');
         setIsLoggedIn(true);
       } else {
-        setStatus("Offline")
+        setStatus('Offline');
         setIsLoggedIn(false);
       }
     });
@@ -47,7 +80,7 @@ const App = () => {
         setUsers(array);
       });
   }, []);
-  const Header = ({ item }) => {
+  const Header = ({item}) => {
     return (
       <View
         style={{
@@ -65,17 +98,17 @@ const App = () => {
           <TouchableOpacity onPress={() => navigation.navigate('chatList')}>
             <AntDesign name="left" size={25} color="black" />
           </TouchableOpacity>
-          <Text style={{ fontSize: 20, color: 'black', fontWeight: '600' }}>
+          <Text style={{fontSize: 20, color: 'black', fontWeight: '600'}}>
             Chat App
           </Text>
         </View>
-        <Text style={{ paddingHorizontal: 42 }}>{item.status}</Text>
+        <Text style={{paddingHorizontal: 42}}>{item.status}</Text>
       </View>
-    )
-  }
+    );
+  };
   const AuthStack = () => {
     return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="login" component={Login} />
         <Stack.Screen name="signup" component={SignUp} />
       </Stack.Navigator>
@@ -86,19 +119,17 @@ const App = () => {
     return (
       <Stack.Navigator>
         <Stack.Screen
-          options={{ headerShown: false }}
+          options={{headerShown: false}}
           name="chatList"
           component={ChatList}
         />
         <Stack.Screen
           options={{
-            headerShown: false, header: () => (
+            headerShown: false,
+            header: () =>
               users.map((x, index) => {
-                return (
-                  x?.uid === currentUser && <Header item={x} />
-                )
-              })
-            )
+                return x?.uid === currentUser && <Header item={x} />;
+              }),
           }}
           name="chat"
           component={ChatScreen}

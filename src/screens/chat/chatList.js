@@ -14,7 +14,6 @@ export default function ChatList() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
   const navigation = useNavigation();
-// sandeeo
   useEffect(() => {
     StatusBar.setBarStyle('dark-content', false);
     GetFireStoreApp.collection('Users')
@@ -61,12 +60,12 @@ export default function ChatList() {
                 onPress={() => navigation.navigate('chat')}
                 style={styles.userCard}>
                 <View style={styles.userCardRight}>
-                  <Text
+                  {/* <Text
                     style={{
                       fontSize: 18,
                       fontWeight: '500',
                       color: 'white',
-                    }}>{`${user.name}`}</Text>
+                    }}>{`${user.name}`}</Text> */}
                   <Text style={{ color: 'white' }}>{`${user?.email}`}</Text>
                   <Text style={{ color: 'white' }}>{`${user?.status}`}</Text>
                 </View>
